@@ -68,4 +68,17 @@ vydané obálky
 platné hlasy  
 kandidující strany (co sloupec, to počet hlasů pro stranu pro všechny strany).
 
+### Ukázka výsledku
+Kód obce,Název obce,Voliči v seznamu,Vydané obálky,Platné hlasy,Občanská demokratická strana,Řád národa - Vlastenecká unie,CESTA ODPOVĚDNÉ SPOLEČNOSTI,Česká str.sociálně demokrat.,Radostné Česko,STAROSTOVÉ A NEZÁVISLÍ,Komunistická str.Čech a Moravy,Strana zelených,"ROZUMNÍ-stop migraci,diktát.EU",Strana svobodných občanů,Blok proti islam.-Obran.domova,Občanská demokratická aliance,Česká pirátská strana
+586030,Archlebov,752,416,415,25,0,0,47,1,12,49,9,2,3,1,1,39
+586048,Blatnice pod Svatým Antonínkem,1733,1066,1055,101,1,1,70,4,50,61,7,9,42,0,2,74
+586056,Blatnička,356,239,238,16,0,0,14,0,10,17,3,0,1,0,0,23
+586072,Bukovany,618,380,372,35,0,0,43,0,5,42,4,5,3,0,0,52
+586081,Bzenec,3501,2016,2004,235,4,1,153,2,72,181,17,15,23,0,0,135
+586099,Čejč,1019,643,630,70,0,0,42,0,35,61,10,5,6,0,1,78
+586102,Čejkovice,2107,1258,1256,164,3,2,80,0,51,107,15,15,21,1,0,112
+586111,Čeložnice,337,217,216,11,0,0,12,1,13,21,1,5,5,0,0,16
+586129,Dambořice,1079,634,624,19,0,1,65,2,19,47,5,7,6,0,1,38
+586137,Dolní Bojanovice,2349,1566,1530,73,5,0,61,0,102,54,15,4,35,1,5,91
+
 Ukázka výstupu CSV souboru [ZDE](https://github.com/Zuziknows/3_projekt/blob/main/hodoninsko_vysledky.jpg)
