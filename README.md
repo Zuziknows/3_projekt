@@ -14,7 +14,7 @@ $ pip install -r requirements.txt
 
 ## Verze Pythonu
 
-K funkčnosti je třeba mít nainstalovánp verzi Pythonu 3.8+
+K funkčnosti je třeba mít nainstalovanou verzi Pythonu 3.8+
 
 ## Spuštění projektu 
 
