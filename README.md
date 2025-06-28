@@ -8,7 +8,7 @@ Tento projekt slouží k extrahování výsledků parlamentních voleb z roku 20
 
 ## Instalace knihoven
 
-Knihovny, které jsou použity v kódu najdeš v souboru requirments.txt. Pro instalaci knihoven doporučuji použít nové virtuální prostředí, aby knihovny z tohoto projektu neovlivnily tvé jiné projekty. Knihovnu můžeš do svého virtuálního prostředí nahrát prostřednictvím terminálu a následujícíhopříkazu:
+Knihovny, které jsou použity v kódu najdeš v souboru requirments.txt. Pro instalaci knihoven doporučuji použít nové virtuální prostředí, aby knihovny z tohoto projektu neovlivnily tvé jiné projekty. Knihovnu můžeš do svého virtuálního prostředí nahrát prostřednictvím terminálu a následujícího příkazu:
 
 $ pip install -r requirements.txt
 
