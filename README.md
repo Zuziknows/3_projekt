@@ -34,9 +34,10 @@ $ python main.py https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=11&xnum
 
 Spuštění programu:
 
-python main.py "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=11&xnumnuts=6205" Hodoninsko_vysledky.csv
+$  python main.py "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=11&xnumnuts=6205" Hodoninsko_vysledky.csv
 
-Průběh stahování:  
+Průběh stahování: 
+
 Zpracováno: Archlebov (1/82)  
 Zpracováno: Blatnice pod Svatým Antonínkem (2/82)  
 Zpracováno: Blatnička (3/82)  
@@ -60,7 +61,7 @@ Hotovo! Data byla úspěšně uložena do: Hodoninsko_vysledky.csv
 
 
 ## Výsledek
-Výsledný CSV soubor obsahuje pro každou obec ve zvolené oblasti:  
+Výsledný CSV soubor obsahuje pro každou obec pro zvolený územní celek:  
 kód obce  
 název obce  
 voliči v seznamu  
@@ -81,4 +82,4 @@ Kód obce,Název obce,Voliči v seznamu,Vydané obálky,Platné hlasy,Občanská
 586129,Dambořice,1079,634,624,19,0,1,65,2,19,47,5,7,6,0,1,38
 586137,Dolní Bojanovice,2349,1566,1530,73,5,0,61,0,102,54,15,4,35,1,5,91
 
-Ukázka výstupu CSV souboru [ZDE](https://github.com/Zuziknows/3_projekt/blob/main/hodoninsko_vysledky.jpg)
+Ukázka výstupu CSV souboru [ZDE](https://github.com/Zuziknows/3_projekt/blob/main/hodoninsko_vysledky.jpg).
