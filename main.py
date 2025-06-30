@@ -16,28 +16,28 @@ def main():
     if len(sys.argv) != 3:
         print("Ahoj a vítej v programu pro scraper výsledků voleb z roku 2017, který vytáhne data přímo z webu.")
         print("Více o tom, co tento program dělá a jak ho rozeběhnout, se dočteš v souboru README, který jsem pro Tebe připravila.")
-        print("-" * 30)
+        print("-" * 50)
         print("Pokud vidíš tento text, udělal jsi něco špatně. Pro správné spuštění zadej 2 argumenty v tomto pořadí:")
         print("1) Odkaz na územní celek, který chceš scrapovat z této URL --> https://www.volby.cz/pls/ps2017nss/ps3?xjazyk=CZ")
-        print("2) Název výstupního CSV souboru (např. Hodoninsko_volby.csv)")
-        print("-" * 30)
+        print("2) Název výstupního CSV souboru (např. Hodoninsko_vysledky.csv)")
+        print("-" * 50)
         print("Příklad použití: python main.py <URL_okresu> <vysledky_voleb.csv>")
-        print("Příklad použití: python main.py https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=11&xnumnuts=6205 <Hodoninsko_volby.csv")
+        print("Příklad použití: python main.py https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=11&xnumnuts=6205 Hodoninsko_vysledky.csv")
         sys.exit(1)
 
     url = sys.argv[1]
     vysledky_voleb = sys.argv[2]
 
     if not url.startswith("http") or "volby.cz" not in url:
-        print("První argument není platná URL adresa.")
+        print("Vyskytla se chyba --> první argument není platná URL adresa.")
         sys.exit(1)
 
     if not vysledky_voleb.endswith(".csv"):
-        print("Druhý argument musí být název CSV souboru končící .csv")
+        print("Vyskytla se chyba --> druhý argument musí být název CSV souboru končící .csv")
         sys.exit(1)
 
     if "ps32" not in url:
-        print("URL nevede na stránku okresních výsledků obcí. Použij URL ze sloupce 'Výběr obce'.")
+        print("Vyskytla se chyba --> URL nevede na stránku okresních výsledků obcí. Použij URL ze sloupce 'Výběr obce'.")
         sys.exit(1)
 
     zahlavi = ["Kód obce", "Název obce", "Voliči v seznamu", "Vydané obálky", "Platné hlasy"]
