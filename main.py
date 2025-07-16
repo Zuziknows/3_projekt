@@ -5,14 +5,12 @@
 #email: zuzanka72@seznam.cz
 #"""
 
-#Jdeme na to!!!!
-
 import sys
 import requests
 from bs4 import BeautifulSoup
 import csv
 
-def main():
+def vystup_argumentu():
     if len(sys.argv) != 3:
         print("Ahoj a vítej v programu pro scraper výsledků voleb z roku 2017, který vytáhne data přímo z webu.")
         print("Více o tom, co tento program dělá a jak ho rozeběhnout, se dočteš v souboru README, který jsem pro Tebe připravila.")
@@ -40,90 +38,109 @@ def main():
         print("Vyskytla se chyba --> URL nevede na stránku okresních výsledků obcí. Použij URL ze sloupce 'Výběr obce'.")
         sys.exit(1)
 
-    zahlavi = ["Kód obce", "Název obce", "Voliči v seznamu", "Vydané obálky", "Platné hlasy"]
+    return url, vysledky_voleb
+
+def ziskej_odkazy_na_obce(url):
+    odpoved = requests.get(url)
+    soup = BeautifulSoup(odpoved.text, "html.parser")
+    obecni_zaznamy = []
+
+    for tabulka in soup.find_all("table"):
+        for row in tabulka.find_all("tr")[2:]:
+            td = row.find_all("td")
+            if len(td) > 1:
+                link = td[0].find("a")
+                if link:
+                    kod = td[0].text.strip()
+                    nazev = td[1].text.strip()
+                    href = link["href"]
+                    url_obce = "https://www.volby.cz/pls/ps2017nss/" + href
+                    obecni_zaznamy.append((kod, nazev, url_obce))
+
+    if not obecni_zaznamy:
+        print("Vyskytla se chyba --> nebyly nalezeny žádné odkazy na obce.")
+        sys.exit(1)
+
+    return obecni_zaznamy
+
+def ziskej_nazvy_stran(url_obce):
+    odpoved = requests.get(url_obce)
+    soup = BeautifulSoup(odpoved.text, "html.parser")
+    nazvy_stran = []
+
+    for tabulka in soup.find_all("table"):
+        headers = [th.get_text(strip=True).lower() for th in tabulka.find_all("th")]
+        if any("strana" in h for h in headers):
+            for row in tabulka.find_all("tr")[1:]:
+                cells = row.find_all("td")
+                if len(cells) >= 2:
+                    nazev_strany = cells[1].get_text(strip=True)
+                    if nazev_strany not in nazvy_stran:
+                        nazvy_stran.append(nazev_strany)
+
+    if not nazvy_stran:
+        print("Vyskytla se chyba --> nenalezena žádná strana v tabulkách.")
+        sys.exit(1)
+
+    return nazvy_stran
+
+def zpracuj_obec(kod_obce, nazev_obce, url_obce, nazvy_stran):
+    odpoved = requests.get(url_obce)
+    soup = BeautifulSoup(odpoved.text, "html.parser")
 
     try:
-        okresni_data = requests.get(url)
-        okresni_soup = BeautifulSoup(okresni_data.text, "html.parser")
+        volici = soup.find("td", {"headers": "sa2"}).text.replace("\xa0", "")
+        obalky = soup.find("td", {"headers": "sa3"}).text.replace("\xa0", "")
+        hlasy = soup.find("td", {"headers": "sa6"}).text.replace("\xa0", "")
+    except AttributeError:
+        volici = obalky = hlasy = ""
 
-        obecni_zaznamy = []
-        for tabulka in okresni_soup.find_all("table"):
+    radek = [kod_obce, nazev_obce, volici, obalky, hlasy]
+
+    hlasy_dict = {}
+
+    for tabulka in soup.find_all("table"):
+        headers = [th.get_text(strip=True).lower() for th in tabulka.find_all("th")]
+        if any("strana" in h for h in headers):
             for row in tabulka.find_all("tr")[2:]:
-                td = row.find_all("td")
-                if len(td) > 1:
-                    link = td[0].find("a")
-                    if link:
-                        kod = td[0].text.strip()
-                        nazev = td[1].text.strip()
-                        href = link["href"]
-                        url_obce = "https://www.volby.cz/pls/ps2017nss/" + href
-                        obecni_zaznamy.append((kod, nazev, url_obce))
+                cells = row.find_all("td")
+                if len(cells) >= 3:
+                    nazev_strany = cells[1].get_text(strip=True)
+                    pocet_hlasu = cells[2].get_text(strip=True).replace("\xa0", "")
+                    if nazev_strany in hlasy_dict:
+                        
+                        hlasy_dict[nazev_strany] = str(int(hlasy_dict[nazev_strany]) + int(pocet_hlasu))
+                    else:
+                        hlasy_dict[nazev_strany] = pocet_hlasu
 
-        if not obecni_zaznamy:
-            print("Vyskytla se chyba --> nebyly nalezeny žádné odkazy na obce.")
-            sys.exit(1)
+    for strana in nazvy_stran:
+        radek.append(hlasy_dict.get(strana, "0"))
 
-        prvni_obec_url = obecni_zaznamy[0][2]
-        prvni_data = requests.get(prvni_obec_url)
-        prvni_soup = BeautifulSoup(prvni_data.text, "html.parser")
+    return radek
 
-        strany_tabulka = None
-        for tabulka in prvni_soup.find_all("table"):
-            headers = [th.get_text(strip=True).lower() for th in tabulka.find_all("th")]
-            if any("strana" in h for h in headers):
-                strany_tabulka = tabulka
-                break
+def uloz_vysledky(soubor, zahlavi, zaznamy):
+    with open(soubor, "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(zahlavi)
+        writer.writerows(zaznamy)
 
-        if not strany_tabulka:
-            print("Vyskytla se chyba --> nenalezena tabulka kandidujících stran.")
-            sys.exit(1)
+def main():
+    url, vysledky_voleb = vystup_argumentu()
+    obecni_zaznamy = ziskej_odkazy_na_obce(url)
 
-        nazvy_stran = []
-        for row in strany_tabulka.find_all("tr")[1:]:
-            cells = row.find_all("td")
-            if len(cells) >= 2:
-                nazvy_stran.append(cells[1].get_text(strip=True))
-                zahlavi.append(cells[1].get_text(strip=True))
+    prvni_obec_url = obecni_zaznamy[0][2]
+    nazvy_stran = ziskej_nazvy_stran(prvni_obec_url)
 
-        with open(vysledky_voleb, "w", newline="", encoding="utf-8") as f:
-            writer = csv.writer(f)
-            writer.writerow(zahlavi)
+    zahlavi = ["Kód obce", "Název obce", "Voliči v seznamu", "Vydané obálky", "Platné hlasy"] + nazvy_stran
+    vsechny_radky = []
 
-            for i, (kod_obce, nazev_obce, link_obce) in enumerate(obecni_zaznamy):
-                obec_data = requests.get(link_obce)
-                obec_soup = BeautifulSoup(obec_data.text, "html.parser")
+    for i, (kod, nazev, url_obce) in enumerate(obecni_zaznamy):
+        radek = zpracuj_obec(kod, nazev, url_obce, nazvy_stran)
+        vsechny_radky.append(radek)
+        print(f"Zpracováno: {nazev} ({i+1}/{len(obecni_zaznamy)})")
 
-                try:
-                    volici = obec_soup.find("td", {"headers": "sa2"}).text.replace("\xa0", "")
-                    obalky = obec_soup.find("td", {"headers": "sa3"}).text.replace("\xa0", "")
-                    hlasy = obec_soup.find("td", {"headers": "sa6"}).text.replace("\xa0", "")
-                except AttributeError:
-                    volici = obalky = hlasy = ""
-
-                row_data = [kod_obce, nazev_obce, volici, obalky, hlasy]
-
-                strany_pol = obec_soup.find_all("table")
-                hlasy_dict = {}
-                for tabulka in strany_pol:
-                    headers = [th.get_text(strip=True).lower() for th in tabulka.find_all("th")]
-                    if any("strana" in h for h in headers):
-                        for row in tabulka.find_all("tr")[2:]:
-                            cells = row.find_all("td")
-                            if len(cells) >= 3:
-                                hlasy_dict[cells[1].get_text(strip=True)] = cells[2].get_text(strip=True).replace("\xa0", "")
-                        break
-
-                for strana in nazvy_stran:
-                    row_data.append(hlasy_dict.get(strana, "0"))
-
-                writer.writerow(row_data)
-                print(f"Zpracováno: {nazev_obce} ({i+1}/{len(obecni_zaznamy)})")
-
-        print(f"\nHotovo! Data byla úspěšně uložena do: {vysledky_voleb}")
-
-    except Exception as e:
-        print(f"Neočekávaná chyba: {e}")
-        sys.exit(1)
+    uloz_vysledky(vysledky_voleb, zahlavi, vsechny_radky)
+    print(f"\nHotovo! Data byla úspěšně uložena do: {vysledky_voleb}")
 
 if __name__ == "__main__":
     main()
