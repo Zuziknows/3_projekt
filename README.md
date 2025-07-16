@@ -30,7 +30,7 @@ Reálný příklad pro územní celek Hodonín:
 
 $ python main.py https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=11&xnumnuts=6205 Hodoninsko_vysledky.csv
 
-#### Dej pozor! Příkazový řáadek nemusí zadaný argument URL přečíst správně v případě, že obsahuje znak "&". Pokud URL tento znak obsahuje je potřeba URL dát do uvozovek. 
+#### Dej pozor! Příkazový řádek nemusí zadaný argument URL přečíst správně v případě, že obsahuje znak "&". Pokud URL tento znak obsahuje je potřeba URL dát do uvozovek. 
 
 Spuštění programu:
 
